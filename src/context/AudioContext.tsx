@@ -31,7 +31,7 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
     
     const duckMusic = () => {
         setOriginalVolume(musicVolume);
-        setMusicVolume(0.15);
+        setMusicVolume(0.3);
     };
 
     const restoreMusic = () => {
