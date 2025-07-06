@@ -11,7 +11,7 @@ export function MusicPlayer() {
     const [duration, setDuration] = useState(0);
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const sounds = useAudioPlayer(tracks[currentTrackIndex].source);
-    const { musicVolume } = useAudioContext();
+    const { musicVolume, isSuperPerforatorPlaying } = useAudioContext();
 
     useEffect(() => {
         // Update the audio player volume when musicVolume changes
@@ -21,9 +21,16 @@ export function MusicPlayer() {
     }, [musicVolume, sounds]);
 
     useEffect(() => {
+        // Pause music when SuperPerforator is playing
+        if (isSuperPerforatorPlaying && isPlaying) {
+            sounds.pause();
+        }
+    }, [isSuperPerforatorPlaying, sounds, isPlaying]);
+
+    useEffect(() => {
         // Update progress every second when playing
         const interval = setInterval(() => {
-            if (sounds && isPlaying) {
+            if (sounds && isPlaying && !isSuperPerforatorPlaying) {
                 const newCurrentTime = sounds.currentTime || 0;
                 const newDuration = sounds.duration || 0;
                 
@@ -38,7 +45,7 @@ export function MusicPlayer() {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [sounds, isPlaying, currentTrackIndex]);
+    }, [sounds, isPlaying, currentTrackIndex, isSuperPerforatorPlaying]);
 
     useEffect(() => {
         // Set initial duration when audio loads
@@ -61,8 +68,8 @@ export function MusicPlayer() {
         setCurrentTime(0);
         setDuration(0);
         
-        // Auto-play the new track if player was in playing state
-        if (isPlaying && sounds) {
+        // Auto-play the new track if player was in playing state and SuperPerforator is not playing
+        if (isPlaying && sounds && !isSuperPerforatorPlaying) {
             // Small delay to ensure audio is loaded
             const playTimeout = setTimeout(() => {
                 sounds.volume = musicVolume; // Set volume before playing
@@ -70,15 +77,16 @@ export function MusicPlayer() {
             }, 100);
             return () => clearTimeout(playTimeout);
         }
-    }, [currentTrackIndex, sounds]); // Removed isPlaying and musicVolume from dependencies
+    }, [currentTrackIndex, sounds]);
 
     const handlePlayerPress = async () => {
-        if(!isPlaying) {
-            sounds.volume = musicVolume;
-            sounds.play();
+        if (!isPlaying) {
+            if (!isSuperPerforatorPlaying) {
+                sounds.volume = musicVolume;
+                sounds.play();
+            }
             setIsPlaying(true);
-        }
-        else{
+        } else {
             sounds.pause();
             setIsPlaying(false);
         }
@@ -142,14 +150,22 @@ export function MusicPlayer() {
                         icon="skip-previous"
                         size={30}
                         onPress={handlePreviousTrack}
-                        style={styles.controlButton}
+                        style={[
+                            styles.controlButton,
+                            isSuperPerforatorPlaying && styles.disabledButton
+                        ]}
+                        disabled={isSuperPerforatorPlaying}
                     />
                     
                     <Button 
                         icon={isPlaying ? "pause" : "play"} 
                         mode="contained" 
                         onPress={handlePlayerPress}
-                        style={styles.playButton}
+                        style={[
+                            styles.playButton,
+                            isSuperPerforatorPlaying && styles.disabledPlayButton
+                        ]}
+                        disabled={isSuperPerforatorPlaying}
                     >
                         {isPlaying ? "Pause" : "Play"}
                     </Button>
@@ -158,19 +174,33 @@ export function MusicPlayer() {
                         icon="skip-next"
                         size={30}
                         onPress={handleNextTrack}
-                        style={styles.controlButton}
+                        style={[
+                            styles.controlButton,
+                            isSuperPerforatorPlaying && styles.disabledButton
+                        ]}
+                        disabled={isSuperPerforatorPlaying}
                     />
                 </View>
                 
                 <View style={styles.progressContainer}>
                     <ProgressBar 
                         progress={progress} 
-                        color="#560807" 
+                        color={isSuperPerforatorPlaying ? "#ccc" : "#560807"}
                         style={styles.progressBar}
                     />
                     <View style={styles.timeContainer}>
-                        <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-                        <Text style={styles.timeText}>{formatTime(duration)}</Text>
+                        <Text style={[
+                            styles.timeText,
+                            isSuperPerforatorPlaying && styles.disabledText
+                        ]}>
+                            {formatTime(currentTime)}
+                        </Text>
+                        <Text style={[
+                            styles.timeText,
+                            isSuperPerforatorPlaying && styles.disabledText
+                        ]}>
+                            {formatTime(duration)}
+                        </Text>
                     </View>
                 </View>
             </View>
@@ -215,8 +245,16 @@ const styles = StyleSheet.create({
     controlButton: {
         backgroundColor: '#f0f0f0'
     },
+    disabledButton: {
+        backgroundColor: '#e0e0e0',
+        opacity: 0.5
+    },
     playButton: {
         backgroundColor: '#560807',
+        marginHorizontal: 10
+    },
+    disabledPlayButton: {
+        backgroundColor: '#8a8a8a',
         marginHorizontal: 10
     },
     progressContainer: {
@@ -235,5 +273,8 @@ const styles = StyleSheet.create({
     timeText: {
         fontSize: 16,
         color: '#666'
+    },
+    disabledText: {
+        color: '#ccc'
     }
 });

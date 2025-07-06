@@ -13,7 +13,7 @@ const cardWidth = (screenWidth - 60) / 2; // 60 = padding and margins
 
 export function SoundCard({ text, audioSource }: SoundCardProps) {
     const sound = useAudioPlayer(audioSource);
-    const { setSoundEffectPlaying, isSoundEffectPlaying } = useAudioContext();
+    const { setSoundEffectPlaying, isSoundEffectPlaying, isSuperPerforatorPlaying } = useAudioContext();
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const isPlayingRef = useRef(false);
     
@@ -58,7 +58,7 @@ export function SoundCard({ text, audioSource }: SoundCardProps) {
     
     return (
         <TouchableOpacity 
-            disabled={isSoundEffectPlaying} 
+            disabled={isSoundEffectPlaying || isSuperPerforatorPlaying} 
             style={[
                 styles.card, 
                 { width: cardWidth },

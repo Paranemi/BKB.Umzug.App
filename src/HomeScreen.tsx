@@ -1,11 +1,13 @@
 ﻿import {StyleSheet, ScrollView, View} from "react-native";
 import {MusicPlayer} from "./components/MusicPlayer";
 import {SoundBoard} from "./components/SoundBoard";
+import {SuperPerforator} from "./components/SuperPerforator";
 
 export function HomeScreen() {
     return (
         <View style={styles.container}>
             <MusicPlayer/>
+            <SuperPerforator/>
             <SoundBoard/>
         </View>
            
