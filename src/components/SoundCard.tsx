@@ -62,13 +62,13 @@ export function SoundCard({ text, audioSource }: SoundCardProps) {
             style={[
                 styles.card, 
                 { width: cardWidth },
-                isSoundEffectPlaying && styles.disabledCard
+                (isSoundEffectPlaying || isSuperPerforatorPlaying) && styles.disabledCard
             ]} 
             onPress={playSound}
         >
             <Text style={[
                 styles.text,
-                isSoundEffectPlaying && styles.disabledText
+                (isSoundEffectPlaying || isSuperPerforatorPlaying) && styles.disabledText
             ]}>
                 {text}
             </Text>
