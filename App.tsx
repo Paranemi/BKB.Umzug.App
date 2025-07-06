@@ -1,5 +1,11 @@
 import {HomeScreen} from "./src/HomeScreen";
+import {AudioProvider} from "./src/context/AudioContext";
 
 export default function App() {
-  return <HomeScreen />;
+  return (
+      <AudioProvider>
+        <HomeScreen />
+      </AudioProvider>
+  );
+
 }

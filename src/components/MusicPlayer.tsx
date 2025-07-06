@@ -2,15 +2,23 @@
 import {Button, ProgressBar, IconButton} from "react-native-paper";
 import {useState, useEffect} from "react";
 import {useAudioPlayer} from "expo-audio";
-import {audioSource} from "../utils/music-imports";
+import {tracks} from "../utils/music-imports";
+import {useAudioContext} from "../context/AudioContext";
 
 export function MusicPlayer() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-    const sounds = useAudioPlayer(audioSource[currentTrackIndex]);
-    sounds.volume = 0.2;
+    const sounds = useAudioPlayer(tracks[currentTrackIndex].source);
+    const { musicVolume } = useAudioContext();
+
+    useEffect(() => {
+        // Update the audio player volume when musicVolume changes
+        if (sounds) {
+            sounds.volume = musicVolume;
+        }
+    }, [musicVolume, sounds]);
 
     useEffect(() => {
         // Update progress every second when playing
@@ -18,10 +26,10 @@ export function MusicPlayer() {
             if (sounds && isPlaying) {
                 const newCurrentTime = sounds.currentTime || 0;
                 const newDuration = sounds.duration || 0;
-
+                
                 setCurrentTime(newCurrentTime);
                 setDuration(newDuration);
-
+                
                 // Check if track has ended (with small buffer for timing issues)
                 if (newDuration > 0 && newCurrentTime >= newDuration - 0.1) {
                     handleTrackEnd();
@@ -38,10 +46,10 @@ export function MusicPlayer() {
             const updateDuration = () => {
                 setDuration(sounds.duration || 0);
             };
-
+            
             // Try to get duration immediately
             updateDuration();
-
+            
             // Set up listener for when duration becomes available
             const timeout = setTimeout(updateDuration, 1000);
             return () => clearTimeout(timeout);
@@ -52,19 +60,21 @@ export function MusicPlayer() {
         // Reset time when track changes and auto-play if was playing
         setCurrentTime(0);
         setDuration(0);
-
+        
         // Auto-play the new track if player was in playing state
         if (isPlaying && sounds) {
             // Small delay to ensure audio is loaded
             const playTimeout = setTimeout(() => {
+                sounds.volume = musicVolume; // Set volume before playing
                 sounds.play();
             }, 100);
             return () => clearTimeout(playTimeout);
         }
-    }, [currentTrackIndex, sounds]);
+    }, [currentTrackIndex, sounds, isPlaying, musicVolume]);
 
     const handlePlayerPress = async () => {
         if(!isPlaying) {
+            sounds.volume = musicVolume;
             sounds.play();
             setIsPlaying(true);
         }
@@ -76,7 +86,7 @@ export function MusicPlayer() {
 
     const handleTrackEnd = () => {
         // Auto-advance to next track when current track ends
-        if (currentTrackIndex < audioSource.length - 1) {
+        if (currentTrackIndex < tracks.length - 1) {
             setCurrentTrackIndex(currentTrackIndex + 1);
         } else {
             // Loop back to first track
@@ -86,7 +96,7 @@ export function MusicPlayer() {
     };
 
     const handleNextTrack = () => {
-        if (currentTrackIndex < audioSource.length - 1) {
+        if (currentTrackIndex < tracks.length - 1) {
             setCurrentTrackIndex(currentTrackIndex + 1);
         } else {
             // Loop back to first track
@@ -100,7 +110,7 @@ export function MusicPlayer() {
             setCurrentTrackIndex(currentTrackIndex - 1);
         } else {
             // Loop to last track
-            setCurrentTrackIndex(audioSource.length - 1);
+            setCurrentTrackIndex(tracks.length - 1);
         }
         // Keep playing state - the new track will auto-play if currently playing
     };
@@ -111,27 +121,22 @@ export function MusicPlayer() {
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const getTrackName = (index: number): string => {
-        // Extract track name from file path
-        const source = audioSource[index];
-        if (source && typeof source === 'object' && 'uri' in source) {
-            return `Track ${index + 1}`;
-        }
-        // For require() sources, we can't easily get the filename
-        // So we'll use a simple track numbering
-        return `Track ${index + 1}`;
+    const getCurrentTrackName = (): string => {
+        return tracks[currentTrackIndex].name;
     };
 
     const progress = duration > 0 ? currentTime / duration : 0;
-
+    
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>Ein Buch über eine Indianer-Karte-Schatz</Text>
+            
             <View style={styles.playerContainer}>
-                <Text style={styles.trackName}>{getTrackName(currentTrackIndex)}</Text>
+                <Text style={styles.trackName}>{getCurrentTrackName()}</Text>
                 <Text style={styles.trackInfo}>
-                    {currentTrackIndex + 1} von {audioSource.length}
+                    {currentTrackIndex + 1} von {tracks.length}
                 </Text>
-
+                
                 <View style={styles.controlsContainer}>
                     <IconButton
                         icon="skip-previous"
@@ -139,16 +144,16 @@ export function MusicPlayer() {
                         onPress={handlePreviousTrack}
                         style={styles.controlButton}
                     />
-
-                    <Button
-                        icon={isPlaying ? "pause" : "play"}
-                        mode="contained"
+                    
+                    <Button 
+                        icon={isPlaying ? "pause" : "play"} 
+                        mode="contained" 
                         onPress={handlePlayerPress}
                         style={styles.playButton}
                     >
                         {isPlaying ? "Pause" : "Play"}
                     </Button>
-
+                    
                     <IconButton
                         icon="skip-next"
                         size={30}
@@ -156,11 +161,11 @@ export function MusicPlayer() {
                         style={styles.controlButton}
                     />
                 </View>
-
+                
                 <View style={styles.progressContainer}>
-                    <ProgressBar
-                        progress={progress}
-                        color="#6200ea"
+                    <ProgressBar 
+                        progress={progress} 
+                        color="#6200ea" 
                         style={styles.progressBar}
                     />
                     <View style={styles.timeContainer}>
