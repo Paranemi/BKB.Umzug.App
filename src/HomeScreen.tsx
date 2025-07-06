@@ -1,23 +1,21 @@
-﻿import { StyleSheet, ScrollView} from "react-native";
+﻿import {StyleSheet, ScrollView, View} from "react-native";
 import {MusicPlayer} from "./components/MusicPlayer";
 import {SoundBoard} from "./components/SoundBoard";
 
 export function HomeScreen() {
     return (
-        // <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <>
+        <View style={styles.container}>
             <MusicPlayer/>
             <SoundBoard/>
-        </>
+        </View>
            
-        // </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#BB9582',
     },
     contentContainer: {
         alignItems: "center",

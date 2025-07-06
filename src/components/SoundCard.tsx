@@ -13,7 +13,7 @@ const cardWidth = (screenWidth - 60) / 2; // 60 = padding and margins
 
 export function SoundCard({ text, audioSource }: SoundCardProps) {
     const sound = useAudioPlayer(audioSource);
-    const { setSoundEffectPlaying } = useAudioContext();
+    const { setSoundEffectPlaying, isSoundEffectPlaying } = useAudioContext();
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const isPlayingRef = useRef(false);
     
@@ -27,6 +27,10 @@ export function SoundCard({ text, audioSource }: SoundCardProps) {
     }, []);
     
     const playSound = () => {
+        if(isSoundEffectPlaying){
+            return;
+        }
+        
         // Duck the music when sound effect starts
         setSoundEffectPlaying(true);
         isPlayingRef.current = true;

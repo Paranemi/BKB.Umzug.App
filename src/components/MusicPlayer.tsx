@@ -165,7 +165,7 @@ export function MusicPlayer() {
                 <View style={styles.progressContainer}>
                     <ProgressBar 
                         progress={progress} 
-                        color="#6200ea" 
+                        color="#560807" 
                         style={styles.progressBar}
                     />
                     <View style={styles.timeContainer}>
@@ -181,7 +181,6 @@ export function MusicPlayer() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
         top: 60,
         gap: 20,
@@ -217,6 +216,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f0f0f0'
     },
     playButton: {
+        backgroundColor: '#560807',
         marginHorizontal: 10
     },
     progressContainer: {
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 4
     },
     timeText: {
-        fontSize: 12,
+        fontSize: 16,
         color: '#666'
     }
 });

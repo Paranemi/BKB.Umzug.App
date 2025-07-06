@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, ReactNode } from 'react';
+﻿import React, {createContext, useContext, useState, ReactNode, useEffect} from 'react';
 
 interface AudioContextType {
     musicVolume: number;
@@ -28,10 +28,10 @@ export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
             restoreMusic();
         }
     };
-
+    
     const duckMusic = () => {
         setOriginalVolume(musicVolume);
-        setMusicVolume(0.1);
+        setMusicVolume(0.15);
     };
 
     const restoreMusic = () => {
