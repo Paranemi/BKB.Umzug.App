@@ -57,7 +57,7 @@ export function MusicPlayer() {
     }, [sounds]);
 
     useEffect(() => {
-        // Reset time when track changes and auto-play if was playing
+        // Reset time when track changes ONLY
         setCurrentTime(0);
         setDuration(0);
         
@@ -70,7 +70,7 @@ export function MusicPlayer() {
             }, 100);
             return () => clearTimeout(playTimeout);
         }
-    }, [currentTrackIndex, sounds, isPlaying, musicVolume]);
+    }, [currentTrackIndex, sounds]); // Removed isPlaying and musicVolume from dependencies
 
     const handlePlayerPress = async () => {
         if(!isPlaying) {

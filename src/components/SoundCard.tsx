@@ -27,10 +27,6 @@ export function SoundCard({ text, audioSource }: SoundCardProps) {
     }, []);
     
     const playSound = () => {
-        if(isSoundEffectPlaying){
-            return;
-        }
-        
         // Duck the music when sound effect starts
         setSoundEffectPlaying(true);
         isPlayingRef.current = true;
@@ -61,8 +57,21 @@ export function SoundCard({ text, audioSource }: SoundCardProps) {
     }
     
     return (
-        <TouchableOpacity style={[styles.card, { width: cardWidth }]} onPress={playSound}>
-            <Text style={styles.text}>{text}</Text>
+        <TouchableOpacity 
+            disabled={isSoundEffectPlaying} 
+            style={[
+                styles.card, 
+                { width: cardWidth },
+                isSoundEffectPlaying && styles.disabledCard
+            ]} 
+            onPress={playSound}
+        >
+            <Text style={[
+                styles.text,
+                isSoundEffectPlaying && styles.disabledText
+            ]}>
+                {text}
+            </Text>
         </TouchableOpacity>
     )
 }
@@ -86,10 +95,18 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 5,
     },
+    disabledCard: {
+        opacity: 0.6,
+        shadowOpacity: 0.1,
+        elevation: 2,
+    },
     text: {
         color: 'white',
         fontSize: 14,
         fontWeight: '600',
         textAlign: 'center',
+    },
+    disabledText: {
+        color: '#ccc',
     }
 });
