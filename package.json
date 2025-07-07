@@ -14,7 +14,8 @@
     "react": "19.0.0",
     "react-native": "0.79.5",
     "react-native-paper": "^5.14.5",
-    "expo-audio": "~0.4.8"
+    "expo-audio": "~0.4.8",
+    "expo-dev-client": "~5.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
