@@ -138,4 +138,36 @@ export const soundSource: SoundSource[] = [
         name: "Teil Schatzkarte",
         source: require('../../assets/sounds/TeilDerSchatzkarte.mp3')
     },
-]
+    {
+        name: "Ablenken",
+        source: require('../../assets/sounds/Ablenken.mp3')
+    },
+    {
+        name: "Buch Über",
+        source: require('../../assets/sounds/BuchUeber.mp3')
+    },
+    {
+        name: "Hasen",
+        source: require('../../assets/sounds/Hasen.mp3')
+    },
+    {
+        name: "Indianer",
+        source: require('../../assets/sounds/Indianer.mp3')
+    },
+    {
+        name: "Krasses Pferd",
+        source: require('../../assets/sounds/KrassesPferd.mp3')
+    },
+    {
+        name: "Promille",
+        source: require('../../assets/sounds/Promille.mp3')
+    },
+    {
+        name: "Schneller",
+        source: require('../../assets/sounds/Schneller.mp3')
+    },
+    {
+        name: "Spinnst Du",
+        source: require('../../assets/sounds/SpinnstDu.mp3')
+    }
+];
